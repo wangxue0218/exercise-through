@@ -2,17 +2,17 @@
 {
     public class ReceiptItem
     {
-        public ReceiptItem(Product product, int amount ,int promotedAmount = 0)
+        public ReceiptItem(Product product, int amount )
         {
             Product = product;
             Amount = amount;
-            Promoted = promotedAmount*product.Price;
+            Promoted = 0;
             Total = product.Price * amount;
         }
 
         public Product Product { get; }
         public int Amount { get; }
-        public decimal Promoted { get; }
+        public decimal Promoted { get; set; }
         public decimal Total { get; }
     }
 }

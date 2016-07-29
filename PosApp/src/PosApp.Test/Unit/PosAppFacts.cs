@@ -105,7 +105,7 @@ namespace PosApp.Test.Unit
             Receipt receipt = posService.GetReceipt(
                 new[] { new BoughtProduct("barcode", 1) });
 
-            Assert.Equal(0M, receipt.PromotionItems.Single().promoted);
+            Assert.Equal(0M, receipt.ReceiptItems.Single().Promoted);
         }
         [Fact]
         public void should_return_subpromotion_when_bought_amount_more_than_two()
@@ -119,7 +119,7 @@ namespace PosApp.Test.Unit
             Receipt receipt = posService.GetReceipt(
                 new[] { new BoughtProduct("barcode", 3) });
 
-            Assert.Equal(10M, receipt.PromotionItems.Single().promoted);
+            Assert.Equal(10M, receipt.ReceiptItems.Single().Promoted);
         }
         [Fact]
         public void should_return_total_promoted()

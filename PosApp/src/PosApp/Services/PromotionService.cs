@@ -24,13 +24,14 @@ namespace PosApp.Services
             return m_promotoionRepository.GetBarcodesByType(type)
                 .Select(p => p.Barcode).ToList();
         } 
-        public IList<PromotionItem> BuildPromotionItems(IList<ReceiptItem> receiptItems)
+       
+        public void BuyTwoGetOne(Receipt receipt)
         {
             List<Promotion> promotions =
                 m_promotoionRepository.GetBarcodesByType("BUY_TWO_GET_ONE");
-            return receiptItems.Where(r => promotions.Any(p => p.Barcode == r.Product.Barcode))
-                .Select(pi => new PromotionItem(pi.Product, pi.Amount / 3)).ToArray();
-        }
+            receipt.ReceiptItems.Where(r => promotions.Any(p => p.Barcode == r.Product.Barcode))
+                .ForEach(r => r.Promoted = r.Product.Price * (r.Amount /3));
+        } 
         public void AddBarcode(string type,string[]barcodes)
         {
             Validate(barcodes);
@@ -59,22 +60,20 @@ namespace PosApp.Services
 
         public Receipt BuildPromotion(Receipt receipt)
         {
-//            return m_promotoionRepository.GetAllTypes()
-//                .Select(type => CreatePromotion(type))
-//                .Aggregate((r, promotion) => promotion.GetPromotedReceipt(r), receipt);
+            return m_promotoionRepository.GetAllTypes()
+                .Select(type => CreatePromotion(type))
+                .Aggregate(receipt,(r, promotion) => promotion.GetPromotedReceipt(r, promotion);
 
 
-            receipt.PromotionItems = BuildPromotionItems(receipt.ReceiptItems);
-            List<string> barcodes = GetBarcodes("BUY_HUNDRED_CUT_FIFTY");
-            decimal total_hundred_free_fifty = receipt.ReceiptItems.Where(
-                r => barcodes.Contains(r.Product.Barcode))
-                .Sum(p => p.Total) - receipt.PromotionItems.Where(
-                    pi => barcodes.Contains(pi.Product.Barcode))
-                    .Sum(pri => pri.promoted);
-            receipt.Promoted = receipt.PromotionItems.Sum(p => p.promoted)
-                               + (total_hundred_free_fifty/100)*50;
-            receipt.Total -= receipt.Promoted;
-            return receipt;
+//            BuyTwoGetOne(receipt);
+//            List<string> barcodes = GetBarcodes("BUY_HUNDRED_CUT_FIFTY");
+//            decimal total_hundred_free_fifty = receipt.ReceiptItems.Where(
+//                r => barcodes.Contains(r.Product.Barcode))
+//                .Sum(p => p.Total - p.Promoted);
+//            receipt.Promoted = receipt.ReceiptItems.Sum(p => p.Promoted)
+//                               + (total_hundred_free_fifty/100)*50;
+//            receipt.Total -= receipt.Promoted;
+//            return receipt;
         }
     }
 }

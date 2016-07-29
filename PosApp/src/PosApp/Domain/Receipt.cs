@@ -9,11 +9,12 @@ namespace PosApp.Domain
         public Receipt(IList<ReceiptItem> receiptItems)
         {
             ReceiptItems = receiptItems;
+            Promoted = receiptItems.Sum(r => r.Promoted);
             Total = receiptItems.Sum(r => r.Total);
         }
 
         public IList<ReceiptItem> ReceiptItems { get; set; }
-        public IList<PromotionItem> PromotionItems { get; set; }
+//        public IList<PromotionItem> PromotionItems { get; set; }
         public decimal Total { get; set; }
         public decimal Promoted { get; set; }
     }

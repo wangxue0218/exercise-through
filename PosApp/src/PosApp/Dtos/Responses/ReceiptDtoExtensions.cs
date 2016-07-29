@@ -17,9 +17,7 @@ namespace PosApp.Dtos.Responses
                 .Select(ri =>
                 {
                     string price = ri.Total.ToString("F2");
-                    string promoted = receipt.PromotionItems
-                        .Where(pi => pi.Product.Barcode.Equals(ri.Product.Barcode))
-                        .Select(p => p.promoted).Single().ToString("F2");
+                    string promoted = ri.Promoted.ToString("F2");
                     return $"Product: {ri.Product.Name}, Amount: {ri.Amount}, Price: {price}, Promoted: {promoted}";
                 })
                 .ForEach(ri => receiptBuilder.AppendLine(ri));
