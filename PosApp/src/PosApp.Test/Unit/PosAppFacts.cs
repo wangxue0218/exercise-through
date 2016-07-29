@@ -93,34 +93,6 @@ namespace PosApp.Test.Unit
             Assert.Equal(80M, receipt.Total);
         }
 
-//        [Fact]
-//        public void sub_promoted_is_zero_when_promotions_is_empty()
-//        {
-//            CreateProductFixture(
-//                new Product { Barcode = "barcode", Price = 10M, Name = "I do not care" });
-//
-//            PosService posService = CreatePosService();
-//
-//            Receipt receipt = posService.GetReceipt(
-//                new[] { new BoughtProduct("barcode", 3) });
-//
-//            Assert.Equal(0M, receipt.PromotionItems.Single().promoted);
-//        }
-//        [Fact]
-//        public void subpromotion_is_empty_when_bought_product_not_in_promotions()
-//        {
-//            CreateProductFixture(
-//                new Product { Barcode = "barcode", Price = 10M, Name = "I do not care" });
-//            CreateDiscountProductFixture(
-//                new Promotion { Type = "BUY_TWO_GET_ONE", Barcode = "barcode1" });
-//            PosService posService = CreatePosService();
-//
-//            Receipt receipt = posService.GetReceipt(
-//                new[] { new BoughtProduct("barcode", 3) });
-//
-//            Assert.Equal(0M, receipt.PromotionItems.Single().promoted);
-//        }
-
         [Fact]
         public void subpromotion_is_empty_when_bought_amount_less_than_two()
         {
@@ -168,6 +140,40 @@ namespace PosApp.Test.Unit
                 });
 
             Assert.Equal(11M, receipt.Promoted);
+        }
+
+        [Fact]
+        public void should_cut_when_bought_product_promotion_type_is_only_buy_hunderd_cut_fifty()
+        {
+            CreateProductFixture(
+                new Product {Barcode = "barcode",Name = "I do  not care",Price = 100M});
+            CreateDiscountProductFixture(
+                new Promotion {Type = "BUY_HUNDRED_CUT_FIFTY", Barcode = "barcode"});
+            PosService posService = CreatePosService();
+            Receipt receipt = posService.GetReceipt(new[]
+            {
+                new BoughtProduct("barcode", 1)
+            });
+            Assert.Equal(50,receipt.Promoted);
+            Assert.Equal(50,receipt.Total);
+        }
+        [Fact]
+        public void should_cut_when_bought_product_promotion_type_is_more()
+        {
+            CreateProductFixture(
+                new Product { Barcode = "barcode", Name = "I do  not care", Price = 100M },
+                new Product {Barcode = "barcode1", Name = "I do not care", Price = 10});
+            CreateDiscountProductFixture(
+                new Promotion { Type = "BUY_HUNDRED_CUT_FIFTY", Barcode = "barcode"},
+                new Promotion {Type = "BUY_TWO_GET_ONE", Barcode = "barcode1"});
+            PosService posService = CreatePosService();
+            Receipt receipt = posService.GetReceipt(new[]
+            {
+                new BoughtProduct("barcode", 1),
+                new BoughtProduct("barcode1",4) 
+            });
+            Assert.Equal(60,receipt.Promoted);
+            Assert.Equal(80,receipt.Total);
         }
 
         PosService CreatePosService()

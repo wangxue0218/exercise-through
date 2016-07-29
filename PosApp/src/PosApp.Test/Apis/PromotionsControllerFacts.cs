@@ -3,22 +3,19 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using FluentNHibernate.Testing.Values;
 using PosApp.Domain;
 using PosApp.Test.Common;
-using PosApp.Test.DomainFixtures;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace PosApp.Test.Apis
 {
-    
     public class PromotionsControllerFacts : ApiFactBase
     {
         public PromotionsControllerFacts(ITestOutputHelper outputHelper) : base(outputHelper)
         {
         }
-// post
+
         [Fact]
         public async Task should_return_bad_request_when_request_json_is_null()
         {
@@ -44,9 +41,11 @@ namespace PosApp.Test.Apis
                 new Product { Barcode = "barcode_exist", Id = Guid.NewGuid(), Name = "I do not care", Price = 1M });
             Fixtures.Promotions.Create(
                 new Promotion {Type = "BUY_TWO_GET_ONE", Barcode = "barcode_exist"});
+
             HttpClient httpClient = CreateHttpClient();
             HttpResponseMessage response = await httpClient.PostAsJsonAsync(
                 "promotions/BUY_TWO_GET_ONE", new[] { "barcode_exist" });
+
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
         [Fact]
@@ -59,27 +58,31 @@ namespace PosApp.Test.Apis
                 "promotions/BUY_TWO_GET_ONE", new[] { "barcode_exist" });
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         }
-        // get
         [Fact]
         public async Task should_get_barcodes_by_type()
         {
             Fixtures.Promotions.Create(
                 new Promotion { Type = "BUY_TWO_GET_ONE", Barcode = "barcode_exist" });
+
             HttpClient httpClient = CreateHttpClient();
             HttpResponseMessage response = await httpClient.GetAsync("promotions/BUY_TWO_GET_ONE");
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-//            var barcodes = response.Content.ReadAsAsync<List<string>>();
-//            Assert.Equal({ "barcode_exist"}, barcodes);
+
+            IList<string> barcodes = await response.Content.ReadAsAsync<IList<string>>();
+            Assert.Equal("barcode_exist",barcodes[0]);
+
         }
-        //delete
+
         [Fact]
         public async Task should_delete_barcode_when_it_exist()
         {
             Fixtures.Promotions.Create(
                 new Promotion { Type = "BUY_TWO_GET_ONE", Barcode = "barcode_exist" });
+
             HttpClient httpClient = CreateHttpClient();
             HttpResponseMessage response = await httpClient.DeleteAsync(
                 "promotions/BUY_TWO_GET_ONE", new[] { "barcode_exist" });
+
             Assert.Equal(HttpStatusCode.OK,response.StatusCode);
         }
         [Fact]

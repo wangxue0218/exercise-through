@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.UI;
 using NHibernate.Util;
 using PosApp.Domain;
 using PosApp.Repositories;
@@ -10,54 +9,72 @@ namespace PosApp.Services
 {
     public class PromotionService
     {
-        readonly DiscountProductRespository m_discountProductRespository;
+        readonly DiscountProductRespository m_promotoionRepository;
         readonly IProductRepository m_productRespository;
 
-        public PromotionService(DiscountProductRespository discountProductRespository,
+        public PromotionService(DiscountProductRespository promotoionRepository,
             IProductRepository productRespository)
         {
-            m_discountProductRespository = discountProductRespository;
+            m_promotoionRepository = promotoionRepository;
             m_productRespository = productRespository;
         }
 
         public List<string> GetBarcodes(string type)
         {
-            return m_discountProductRespository.GetBarcodesByType(type)
+            return m_promotoionRepository.GetBarcodesByType(type)
                 .Select(p => p.Barcode).ToList();
         } 
         public IList<PromotionItem> BuildPromotionItems(IList<ReceiptItem> receiptItems)
         {
             List<Promotion> promotions =
-                m_discountProductRespository.GetBarcodesByType("BUY_TWO_GET_ONE");
+                m_promotoionRepository.GetBarcodesByType("BUY_TWO_GET_ONE");
             return receiptItems.Where(r => promotions.Any(p => p.Barcode == r.Product.Barcode))
                 .Select(pi => new PromotionItem(pi.Product, pi.Amount / 3)).ToArray();
         }
         public void AddBarcode(string type,string[]barcodes)
         {
-            Validate(type, barcodes);
+            Validate(barcodes);
             List<string> typeBarcodes = GetBarcodes(type);
-            barcodes.Where(b => typeBarcodes.Contains(b)==false)
-                .Select(nb => new Promotion {Type = type,Barcode = nb})
-                .ForEach(f => m_discountProductRespository.Save(f));
+            List<Promotion> promotions = barcodes.Where(b => typeBarcodes.Contains(b) == false)
+                .Select(nb => new Promotion {Type = type, Barcode = nb}).ToList();
+            m_promotoionRepository.Save(promotions);
         }
 
         public void DeleteBarcode(string type, string[] barcodes)
         {
-            List<Promotion> promotions = m_discountProductRespository.GetByBarcode(barcodes)
+            List<Promotion> promotions = m_promotoionRepository.GetByBarcode(barcodes)
                 .Where(p => p.Type == type)
                 .ToList();
-            m_discountProductRespository.Delete(promotions);
+            m_promotoionRepository.Delete(promotions);
         }
 
-        void Validate(string type, string[] barcodes)
+        void Validate(string[] barcodes)
         {
-//            if(barcodes.Length == 0)
-//                throw new ArgumentNullException();
             string[] uniqueBarcodes = barcodes.Distinct().ToArray();
             if (m_productRespository.CountByBarcodes(uniqueBarcodes) != uniqueBarcodes.Length)
             {
                 throw new ArgumentException("Some of the products cannot be found.");
             }
+        }
+
+        public Receipt BuildPromotion(Receipt receipt)
+        {
+//            return m_promotoionRepository.GetAllTypes()
+//                .Select(type => CreatePromotion(type))
+//                .Aggregate((r, promotion) => promotion.GetPromotedReceipt(r), receipt);
+
+
+            receipt.PromotionItems = BuildPromotionItems(receipt.ReceiptItems);
+            List<string> barcodes = GetBarcodes("BUY_HUNDRED_CUT_FIFTY");
+            decimal total_hundred_free_fifty = receipt.ReceiptItems.Where(
+                r => barcodes.Contains(r.Product.Barcode))
+                .Sum(p => p.Total) - receipt.PromotionItems.Where(
+                    pi => barcodes.Contains(pi.Product.Barcode))
+                    .Sum(pri => pri.promoted);
+            receipt.Promoted = receipt.PromotionItems.Sum(p => p.promoted)
+                               + (total_hundred_free_fifty/100)*50;
+            receipt.Total -= receipt.Promoted;
+            return receipt;
         }
     }
 }

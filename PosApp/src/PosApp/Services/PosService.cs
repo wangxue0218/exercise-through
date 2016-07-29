@@ -15,12 +15,13 @@ namespace PosApp.Services
             m_productRepository = productRepository;
             m_promotionService = promotionService;
         }
+
         public Receipt GetReceipt(IList<BoughtProduct> boughtProducts)
         {
             Validate(boughtProducts);
             IList<ReceiptItem> receiptItems = MergeReceiptItems(boughtProducts);
-            IList<PromotionItem> promotionItems = m_promotionService.BuildPromotionItems(receiptItems);
-            return new Receipt(receiptItems,promotionItems);
+            Receipt receipt = new Receipt(receiptItems);
+            return m_promotionService.BuildPromotion(receipt);
         }
         IList<ReceiptItem> MergeReceiptItems(IList<BoughtProduct> boughtProducts)
         {

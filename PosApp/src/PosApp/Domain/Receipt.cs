@@ -6,16 +6,15 @@ namespace PosApp.Domain
 {
     public class Receipt
     {
-        public Receipt(IList<ReceiptItem> receiptItems,IList<PromotionItem> promotionItems)
+        public Receipt(IList<ReceiptItem> receiptItems)
         {
-            PromotionItems = new ReadOnlyCollection<PromotionItem>(promotionItems);
-            ReceiptItems = new ReadOnlyCollection<ReceiptItem>(receiptItems);
-            Promoted = promotionItems.Sum(p => p.promoted);
-            Total = receiptItems.Sum(r => r.Total) - Promoted;
+            ReceiptItems = receiptItems;
+            Total = receiptItems.Sum(r => r.Total);
         }
-        public IList<ReceiptItem> ReceiptItems { get; }
-        public IList<PromotionItem> PromotionItems { get; }
-        public decimal Total { get; }
-        public decimal Promoted { get; }
+
+        public IList<ReceiptItem> ReceiptItems { get; set; }
+        public IList<PromotionItem> PromotionItems { get; set; }
+        public decimal Total { get; set; }
+        public decimal Promoted { get; set; }
     }
 }

@@ -2,7 +2,6 @@
 using System.Linq;
 using NHibernate;
 using NHibernate.Linq;
-using NHibernate.Util;
 using PosApp.Domain;
 
 namespace PosApp.Repositories
@@ -34,12 +33,18 @@ namespace PosApp.Repositories
                 .Where(p => barcodes.Contains(p.Barcode))
                 .ToList();
         } 
+
+        public void Save(List<Promotion> promotions)
+        {
+            promotions.ForEach(p => m_session.Save(p));
+            m_session.Flush();
+        }
+
         public void Save(Promotion promotion)
         {
             m_session.Save(promotion);
             m_session.Flush();
         }
-
         public void Delete(List<Promotion> promotions)
         {
             promotions.ForEach(p => m_session.Delete(p));

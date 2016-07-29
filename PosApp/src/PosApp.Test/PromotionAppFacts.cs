@@ -16,19 +16,14 @@ namespace PosApp.Test
         {
         }
 
-//        [Fact]
-//        public void should_fail_if_promotion_products_are_not_provided()
-//        {
-//            PromotionService promotionService = CreatePromotionsService();
-//            Assert.Throws<ArgumentNullException>(() =>promotionService.AddBarcode("BUY_TWO_GET_ONE",null));
-//        }
+      
         [Fact]
         public void should_fail_if_promotions_products_are_not_exist()
         {
             CreateProductFixture(
                 new Product { Barcode = "barcode_coca", Id = Guid.NewGuid(), Name = "I do not care", Price = 1M });
             PromotionService promotionsService = CreatePromotionsService();
-            string[] barcodes = new[] {"barcode_not_exist"};
+            string[] barcodes = {"barcode_not_exist"};
             Assert.Throws<ArgumentException>(
                 () => promotionsService.AddBarcode("BUY_TWO_GET_ONE", barcodes));
         }
@@ -50,15 +45,15 @@ namespace PosApp.Test
                 new Product { Barcode = "barcode_exist", Id = Guid.NewGuid(), Name = "I do not care", Price = 1M });
             CreateDiscountProductFixture(
                 new Promotion {Type = "BUY_TWO_GET_ONE",Barcode = "barcode_exist"});
-            PromotionService promotionsService = CreatePromotionsService();
             string type = "BUY_TWO_GET_ONE";
             string[] barcodes = { "barcode_exist"};
+
+            PromotionService promotionsService = CreatePromotionsService();
             promotionsService.AddBarcode(type,barcodes);
+
             Assert.Equal("barcode_exist", promotionsService.GetBarcodes(type).Single());
-//            Assert.Equal(1,promotionsService.GetBarcodes(type).Count);
         }
 
-        //delete
         [Fact]
         public void delete_one_barcode_exist()
         {
@@ -66,10 +61,12 @@ namespace PosApp.Test
                 new Product { Barcode = "barcode_exist", Id = Guid.NewGuid(), Name = "I do not care", Price = 1M });
             CreateDiscountProductFixture(
                 new Promotion { Type = "BUY_TWO_GET_ONE", Barcode = "barcode_exist" });
-            PromotionService promotionsService = CreatePromotionsService();
             string type = "BUY_TWO_GET_ONE";
             string[] barcodes = { "barcode_exist" };
+
+            PromotionService promotionsService = CreatePromotionsService();
             promotionsService.DeleteBarcode(type,barcodes);
+
             Assert.Equal(true,promotionsService.GetBarcodes(type).IsEmpty());
         }
         [Fact]
