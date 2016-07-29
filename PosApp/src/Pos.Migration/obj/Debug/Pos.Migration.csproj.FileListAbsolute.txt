@@ -1,0 +1,8 @@
+C:\Workspace\exercise-through\PosApp\src\Pos.Migration\bin\Debug\Pos.Migration.dll
+C:\Workspace\exercise-through\PosApp\src\Pos.Migration\bin\Debug\Pos.Migration.pdb
+C:\Workspace\exercise-through\PosApp\src\Pos.Migration\bin\Debug\FluentMigrator.dll
+C:\Workspace\exercise-through\PosApp\src\Pos.Migration\bin\Debug\FluentMigrator.pdb
+C:\Workspace\exercise-through\PosApp\src\Pos.Migration\bin\Debug\FluentMigrator.xml
+C:\Workspace\exercise-through\PosApp\src\Pos.Migration\obj\Debug\Pos.Migration.csprojResolveAssemblyReference.cache
+C:\Workspace\exercise-through\PosApp\src\Pos.Migration\obj\Debug\Pos.Migration.dll
+C:\Workspace\exercise-through\PosApp\src\Pos.Migration\obj\Debug\Pos.Migration.pdb
