@@ -9,10 +9,10 @@ namespace PosApp.Services
 {
     public class PromotionService
     {
-        readonly DiscountProductRespository m_promotoionRepository;
+        readonly PromotionRespository m_promotoionRepository;
         readonly IProductRepository m_productRespository;
 
-        public PromotionService(DiscountProductRespository promotoionRepository,
+        public PromotionService(PromotionRespository promotoionRepository,
             IProductRepository productRespository)
         {
             m_promotoionRepository = promotoionRepository;
@@ -30,7 +30,7 @@ namespace PosApp.Services
             List<Promotion> promotions =
                 m_promotoionRepository.GetBarcodesByType("BUY_TWO_GET_ONE");
             receipt.ReceiptItems.Where(r => promotions.Any(p => p.Barcode == r.Product.Barcode))
-                .ForEach(r => r.Promoted = r.Product.Price * (r.Amount /3));
+                .ForEach(r => r.Promoted = r.Product.Price * (r.Amount / 3));
         } 
         public void AddBarcode(string type,string[]barcodes)
         {
@@ -62,18 +62,16 @@ namespace PosApp.Services
         {
             return m_promotoionRepository.GetAllTypes()
                 .Select(type => CreatePromotion(type))
-                .Aggregate(receipt,(r, promotion) => promotion.GetPromotedReceipt(r, promotion);
+                .Aggregate(receipt,(r, promotion) => promotion.GetPromotionReceipt(r));
+        }
 
-
-//            BuyTwoGetOne(receipt);
-//            List<string> barcodes = GetBarcodes("BUY_HUNDRED_CUT_FIFTY");
-//            decimal total_hundred_free_fifty = receipt.ReceiptItems.Where(
-//                r => barcodes.Contains(r.Product.Barcode))
-//                .Sum(p => p.Total - p.Promoted);
-//            receipt.Promoted = receipt.ReceiptItems.Sum(p => p.Promoted)
-//                               + (total_hundred_free_fifty/100)*50;
-//            receipt.Total -= receipt.Promoted;
-//            return receipt;
+        ICaculatePromotions CreatePromotion(string type)
+        {
+            if (type.Equals("BUY_TWO_GET_ONE"))
+                return new BuyTwoGetOne(m_promotoionRepository);
+            if (type.Equals("BUY_HUNDRED_CUT_FIFTY"))
+                return new HundredCutFifty(m_promotoionRepository);
+            throw new NotSupportedException("not supported type");
         }
     }
 }

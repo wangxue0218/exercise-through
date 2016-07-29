@@ -94,7 +94,7 @@ namespace PosApp.Test.Unit
         }
 
         [Fact]
-        public void subpromotion_is_empty_when_bought_amount_less_than_two()
+        public void subpromotion_is_empty_when_bought_amount_less_than_three()
         {
             CreateProductFixture(
                 new Product { Barcode = "barcode", Price = 10M, Name = "I do not care" });
@@ -162,7 +162,7 @@ namespace PosApp.Test.Unit
         {
             CreateProductFixture(
                 new Product { Barcode = "barcode", Name = "I do  not care", Price = 100M },
-                new Product {Barcode = "barcode1", Name = "I do not care", Price = 10});
+                new Product {Barcode = "barcode1", Name = "I do not care", Price = 10M});
             CreateDiscountProductFixture(
                 new Promotion { Type = "BUY_HUNDRED_CUT_FIFTY", Barcode = "barcode"},
                 new Promotion {Type = "BUY_TWO_GET_ONE", Barcode = "barcode1"});

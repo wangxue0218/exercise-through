@@ -88,9 +88,12 @@
     <Compile Include="Dtos\Responses\ErrorDto.cs" />
     <Compile Include="Dtos\Responses\ReceiptDtoExtensions.cs" />
     <Compile Include="PosAppExceptionFilter.cs" />
-    <Compile Include="Repositories\DiscountProductRespository.cs" />
+    <Compile Include="Repositories\PromotionRespository.cs" />
     <Compile Include="Repositories\IProductRepository.cs" />
     <Compile Include="PosAppModule.cs" />
+    <Compile Include="Services\BuyTwoGetOne.cs" />
+    <Compile Include="Services\HundredCutFifty.cs" />
+    <Compile Include="Services\ICaculatePromotions.cs" />
     <Compile Include="Services\PosService.cs" />
     <Compile Include="Domain\Product.cs" />
     <Compile Include="Repositories\ProductRespository.cs" />

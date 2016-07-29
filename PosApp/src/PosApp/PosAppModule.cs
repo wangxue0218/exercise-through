@@ -17,7 +17,7 @@ namespace PosApp
             builder.RegisterType<PosService>().InstancePerLifetimeScope();
             builder.RegisterType<PromotionService>().InstancePerLifetimeScope();
             builder.RegisterType<ProductRespository>().As<IProductRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<DiscountProductRespository>().InstancePerLifetimeScope();
+            builder.RegisterType<PromotionRespository>().InstancePerLifetimeScope();
             builder.Register(CreateSessionFactory).InstancePerLifetimeScope();
             builder.Register(CreateSession).InstancePerLifetimeScope();
         }

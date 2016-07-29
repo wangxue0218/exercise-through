@@ -16,7 +16,7 @@ namespace PosApp.Test.DomainFixtures
 
         public void Create(params Promotion[] promotions)
         {
-            var discountProductRespository = m_scope.Resolve<DiscountProductRespository>();
+            var discountProductRespository = m_scope.Resolve<PromotionRespository>();
             promotions.ForEach(p => discountProductRespository.Save(p));
         }
     }

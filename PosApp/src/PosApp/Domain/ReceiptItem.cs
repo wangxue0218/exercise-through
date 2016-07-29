@@ -6,7 +6,6 @@
         {
             Product = product;
             Amount = amount;
-            Promoted = 0;
             Total = product.Price * amount;
         }
 

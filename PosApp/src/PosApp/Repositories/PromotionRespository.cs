@@ -6,11 +6,11 @@ using PosApp.Domain;
 
 namespace PosApp.Repositories
 {
-    public class DiscountProductRespository
+    public class PromotionRespository
     {
         readonly ISession m_session;
 
-        public DiscountProductRespository(ISession session)
+        public PromotionRespository(ISession session)
         {
             m_session = session;
         }
@@ -49,6 +49,12 @@ namespace PosApp.Repositories
         {
             promotions.ForEach(p => m_session.Delete(p));
             m_session.Flush();
+        }
+
+        public List<string> GetAllTypes()
+        {
+            return m_session.Query<Promotion>().Select(p => p.Type)
+                .Distinct().ToArray().Reverse().ToList();
         }
     }
 }
