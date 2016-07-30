@@ -4,6 +4,7 @@ using Autofac;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
+using PosApp.MockService;
 using PosApp.Repositories;
 using PosApp.Services;
 using Module = Autofac.Module;
@@ -18,6 +19,7 @@ namespace PosApp
             builder.RegisterType<PromotionService>().InstancePerLifetimeScope();
             builder.RegisterType<ProductRespository>().As<IProductRepository>().InstancePerLifetimeScope();
             builder.RegisterType<PromotionRespository>().InstancePerLifetimeScope();
+            builder.RegisterType<SystemDateTime>().As<IDateTime>().InstancePerLifetimeScope();
             builder.Register(CreateSessionFactory).InstancePerLifetimeScope();
             builder.Register(CreateSession).InstancePerLifetimeScope();
         }

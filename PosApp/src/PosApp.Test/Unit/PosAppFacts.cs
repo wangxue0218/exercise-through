@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Autofac;
+using Moq;
 using PosApp.Domain;
+using PosApp.MockService;
 using PosApp.Services;
 using PosApp.Test.Common;
 using Xunit;
@@ -145,6 +147,7 @@ namespace PosApp.Test.Unit
         [Fact]
         public void should_cut_when_bought_product_promotion_type_is_only_buy_hunderd_cut_fifty()
         {
+            MockPromotionDay(true);
             CreateProductFixture(
                 new Product {Barcode = "barcode",Name = "I do  not care",Price = 100M});
             CreateDiscountProductFixture(
@@ -160,6 +163,7 @@ namespace PosApp.Test.Unit
         [Fact]
         public void should_cut_when_bought_product_promotion_type_is_more()
         {
+            MockPromotionDay(true);
             CreateProductFixture(
                 new Product { Barcode = "barcode", Name = "I do  not care", Price = 100M },
                 new Product {Barcode = "barcode1", Name = "I do not care", Price = 10M});
@@ -174,6 +178,49 @@ namespace PosApp.Test.Unit
             });
             Assert.Equal(60,receipt.Promoted);
             Assert.Equal(80,receipt.Total);
+        }
+        [Fact]
+        public void should_cut_when_bought_product_promotion_type_is_only_buy_hunderd_cut_fifty_on_Tuesday()
+        {
+            MockPromotionDay(true);
+            CreateProductFixture(
+                new Product { Barcode = "barcode", Name = "I do  not care", Price = 100M });
+            CreateDiscountProductFixture(
+                new Promotion { Type = "BUY_HUNDRED_CUT_FIFTY", Barcode = "barcode" });
+            PosService posService = CreatePosService();
+            Receipt receipt = posService.GetReceipt(new[]
+            {
+                new BoughtProduct("barcode", 1)
+            });
+            Assert.Equal(50, receipt.Promoted);
+            Assert.Equal(50, receipt.Total);
+        }
+        [Fact]
+        public void should_not_promotion_when_bought_product_promotion_type_is_only_buy_hunderd_cut_fifty_on_Monday()
+        {
+            MockPromotionDay(false);
+            CreateProductFixture(
+                new Product { Barcode = "barcode", Name = "I do  not care", Price = 100M });
+            CreateDiscountProductFixture(
+                new Promotion { Type = "BUY_HUNDRED_CUT_FIFTY", Barcode = "barcode" });
+            PosService posService = CreatePosService();
+            Receipt receipt = posService.GetReceipt(new[]
+            {
+                new BoughtProduct("barcode", 1)
+            });
+            Assert.Equal(0, receipt.Promoted);
+            Assert.Equal(100, receipt.Total);
+        }
+
+        void MockPromotionDay(bool isPromotionDay)
+        {
+            var mock = new Mock<IDateTime>();
+            mock.Setup(m => m.GetWeekDay())
+                .Returns(
+                    () => isPromotionDay ? "Tuesday" : "Monday");
+
+            MockDependency(
+                cb => cb.Register(c => mock.Object).As<IDateTime>().InstancePerLifetimeScope());
         }
 
         PosService CreatePosService()

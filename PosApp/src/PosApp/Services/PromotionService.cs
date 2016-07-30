@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using NHibernate.Util;
 using PosApp.Domain;
+using PosApp.MockService;
 using PosApp.Repositories;
 
 namespace PosApp.Services
@@ -11,12 +12,14 @@ namespace PosApp.Services
     {
         readonly PromotionRespository m_promotoionRepository;
         readonly IProductRepository m_productRespository;
+        readonly IDateTime m_dateTime;
 
         public PromotionService(PromotionRespository promotoionRepository,
-            IProductRepository productRespository)
+            IProductRepository productRespository, IDateTime dateTime)
         {
             m_promotoionRepository = promotoionRepository;
             m_productRespository = productRespository;
+            m_dateTime = dateTime;
         }
 
         public List<string> GetBarcodes(string type)
@@ -25,13 +28,6 @@ namespace PosApp.Services
                 .Select(p => p.Barcode).ToList();
         } 
        
-        public void BuyTwoGetOne(Receipt receipt)
-        {
-            List<Promotion> promotions =
-                m_promotoionRepository.GetBarcodesByType("BUY_TWO_GET_ONE");
-            receipt.ReceiptItems.Where(r => promotions.Any(p => p.Barcode == r.Product.Barcode))
-                .ForEach(r => r.Promoted = r.Product.Price * (r.Amount / 3));
-        } 
         public void AddBarcode(string type,string[]barcodes)
         {
             Validate(barcodes);
@@ -70,7 +66,7 @@ namespace PosApp.Services
             if (type.Equals("BUY_TWO_GET_ONE"))
                 return new BuyTwoGetOne(m_promotoionRepository);
             if (type.Equals("BUY_HUNDRED_CUT_FIFTY"))
-                return new HundredCutFifty(m_promotoionRepository);
+                return new HundredCutFifty(m_promotoionRepository,m_dateTime);
             throw new NotSupportedException("not supported type");
         }
     }

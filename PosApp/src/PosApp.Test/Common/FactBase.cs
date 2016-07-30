@@ -1,5 +1,7 @@
 ﻿using System;
 using Autofac;
+using Moq;
+using PosApp.MockService;
 using PosApp.Test.DomainFixtures;
 using Xunit.Abstractions;
 
@@ -17,6 +19,7 @@ namespace PosApp.Test.Common
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule(new PosAppModule());
+
             m_container = containerBuilder.Build();
             m_testScope = m_container.BeginLifetimeScope();
 
@@ -24,6 +27,12 @@ namespace PosApp.Test.Common
             m_outputRedirector = new OutputRedirector(outputHelper);
 
             Fixtures = new Fixtures(m_container.BeginLifetimeScope());
+        }
+        protected void MockDependency(Action<ContainerBuilder> mockAction)
+        {
+            var containerBuilder = new ContainerBuilder();
+            mockAction(containerBuilder);
+            containerBuilder.Update(m_container);
         }
 
         protected ILifetimeScope GetScope()

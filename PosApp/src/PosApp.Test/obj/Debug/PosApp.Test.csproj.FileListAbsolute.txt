@@ -35,3 +35,7 @@ C:\Workspace\exercise-through\PosApp\src\PosApp.Test\bin\Debug\Autofac.Integrati
 C:\Workspace\exercise-through\PosApp\src\PosApp.Test\obj\Debug\PosApp.Test.csprojResolveAssemblyReference.cache
 C:\Workspace\exercise-through\PosApp\src\PosApp.Test\obj\Debug\PosApp.Test.dll
 C:\Workspace\exercise-through\PosApp\src\PosApp.Test\obj\Debug\PosApp.Test.pdb
+C:\Workspace\exercise-through\PosApp\src\PosApp.Test\bin\Debug\Castle.Core.dll
+C:\Workspace\exercise-through\PosApp\src\PosApp.Test\bin\Debug\Moq.dll
+C:\Workspace\exercise-through\PosApp\src\PosApp.Test\bin\Debug\Castle.Core.xml
+C:\Workspace\exercise-through\PosApp\src\PosApp.Test\bin\Debug\Moq.xml
